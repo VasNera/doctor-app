@@ -38,6 +38,9 @@ public class Doctor extends AbstractEntity{
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(name ="phone_number", nullable = false)
+    private String phoneNumber;
+
     @Column(name = "licence_number", nullable = false, unique = true)
     private String licenceNumber;
 
