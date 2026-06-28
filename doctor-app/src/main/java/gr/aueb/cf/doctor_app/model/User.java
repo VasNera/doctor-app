@@ -46,6 +46,12 @@ public class User extends AbstractEntity implements UserDetails {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Doctor doctor;
 
+    public User(String username, String password){
+        this.username = username;
+        this.password = password;
+    }
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
