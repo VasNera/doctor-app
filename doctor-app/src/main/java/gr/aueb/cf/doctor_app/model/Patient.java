@@ -35,11 +35,12 @@ public class Patient extends AbstractEntity {
     @Column(nullable = false)
     private String email;
 
+    @Column(name = "phone_number", nullable = false)
+    private String phoneNumber;
+
     @Column(nullable = false, unique = true)
     private String amka;
 
-    @Column(name = "phone_number", nullable = false)
-   private String phoneNumber;
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "user_id", nullable = false, unique = true)
