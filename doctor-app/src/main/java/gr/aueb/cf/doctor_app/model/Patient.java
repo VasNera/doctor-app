@@ -32,7 +32,7 @@ public class Patient extends AbstractEntity {
     @Column(unique = true,nullable = false, updatable = false, columnDefinition = "BINARY(16)")
     private UUID uuid = UUID.randomUUID();
 
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String email;
 
     @Column(name = "phone_number", nullable = false)
