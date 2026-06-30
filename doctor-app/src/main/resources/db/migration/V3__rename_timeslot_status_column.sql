@@ -1,0 +1,1 @@
+ALTER TABLE timeslots RENAME COLUMN time_slots_status TO time_slot_status;
