@@ -30,7 +30,7 @@ public class Appointment extends AbstractEntity{
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private AppointmentStatus appointmentStatus;
+    private AppointmentStatus appointmentStatus = AppointmentStatus.PENDING;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id",nullable = false)
