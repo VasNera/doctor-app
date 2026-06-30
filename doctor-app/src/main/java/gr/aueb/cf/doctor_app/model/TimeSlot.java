@@ -1,7 +1,7 @@
 package gr.aueb.cf.doctor_app.model;
 
 
-import gr.aueb.cf.doctor_app.model.enums.TimeSlotsStatus;
+import gr.aueb.cf.doctor_app.model.enums.TimeSlotStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,7 +35,7 @@ public class TimeSlot extends AbstractEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TimeSlotsStatus timeSlotsStatus;
+    private TimeSlotStatus timeSlotStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false)
