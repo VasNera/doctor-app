@@ -24,7 +24,7 @@ public class User extends AbstractEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true,nullable = false, updatable = false, columnDefinition = "BINARY(16")
+    @Column(unique = true,nullable = false, updatable = false, columnDefinition = "BINARY(16)")
     private UUID uuid = UUID.randomUUID();
 
     @Column(nullable = false,unique = true, length = 50)
