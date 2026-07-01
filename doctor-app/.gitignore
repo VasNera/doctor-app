@@ -38,5 +38,5 @@ out/
 .vscode/
 
 ### Application secrets ###
-application-secrets.properties
+application-secret.properties
 .env
