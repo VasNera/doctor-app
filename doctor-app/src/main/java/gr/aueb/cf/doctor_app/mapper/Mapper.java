@@ -45,13 +45,7 @@ public class Mapper {
         patient.setPhoneNumber(insertDTO.phoneNumber());
         patient.setAmka(insertDTO.amka());
 
-        UserInsertDTO userDto = insertDTO.userInsertDTO();
-        User user = new User();
-        user.setUsername(userDto.username());
-        user.setPassword(userDto.password());
-
-        patient.addUser(user);
-        return patient;
+       return patient;
     }
 
     public PatientReadOnlyDTO mapToPatientReadOnlyDTO(Patient patient){
