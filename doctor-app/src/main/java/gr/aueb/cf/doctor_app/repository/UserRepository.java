@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -16,6 +17,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findAllByDeletedFalse(Pageable pageable);
 
     Optional<User> findByUsernameAndDeletedFalse(String username);
+
+    Optional<User> findByUuidAndDeletedFalse(UUID uuid);
 
     boolean existsByUsername(String username);
 }
