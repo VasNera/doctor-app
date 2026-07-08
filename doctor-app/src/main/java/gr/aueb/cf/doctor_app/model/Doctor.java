@@ -8,7 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Time;
+
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -46,6 +47,12 @@ public class Doctor extends AbstractEntity{
 
     @Enumerated(EnumType.STRING)
     private Specialty specialty;
+
+    @Column(name = "activation_token", unique = true)
+    private String activationToken;
+
+    @Column(name = "activation_token_expires_at", columnDefinition = "DATETIME")
+    private Instant activationTokenExpiresAt;
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "user_id", unique = true)
