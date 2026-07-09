@@ -18,6 +18,8 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
     Page<Patient> findAllByDeletedTrue(Pageable pageable);
 
+    Optional<Patient> findByUserUsername(String username);
+
     boolean existsByUuid(UUID uuid);
 
     boolean existsByAmka(String amka);
