@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Optional;
 
 public interface TimeSlotRepository extends JpaRepository<TimeSlot, Long> {
@@ -23,6 +24,8 @@ public interface TimeSlotRepository extends JpaRepository<TimeSlot, Long> {
             (Long doctorId, TimeSlotStatus status, Pageable pageable);
 
     boolean existsByIdAndDoctorIdAndTimeSlotStatus(Long id, Long doctorId, TimeSlotStatus status);
+
+    boolean existsByDoctorIdAndDateAndStartTime(Long doctorId, LocalDate date, LocalTime startTime);
 
 
 }

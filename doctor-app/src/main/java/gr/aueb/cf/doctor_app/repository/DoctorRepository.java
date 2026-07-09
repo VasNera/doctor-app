@@ -20,6 +20,10 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 
     Page<Doctor> findAllByDeletedTrue(Pageable pageable);
 
+    Optional<Doctor> findByActivationToken(String token);
+
+    Optional<Doctor> findByUserUsername(String username);
+
     boolean existsByUuid(UUID uuid);
 
     boolean existsByEmail(String email);
