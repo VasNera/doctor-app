@@ -29,7 +29,7 @@ public class TimeSlotController {
     private final ITimeSlotService timeSlotService;
 
     @PostMapping("/generate")
-    public ResponseEntity<TimeSlotReadOnlyDTO> generateTimeSlots(
+    public ResponseEntity<List<TimeSlotReadOnlyDTO>> generateTimeSlots(
             @Valid
             @RequestBody
             TimeSlotGenerateDTO timeSlotGenerateDTO,
@@ -44,7 +44,7 @@ public class TimeSlotController {
 
         List<TimeSlotReadOnlyDTO> response = timeSlotService.generateTimeSlots(timeSlotGenerateDTO,
                 authentication.getName());
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(response,HttpStatus.CREATED);
 
     }
 
