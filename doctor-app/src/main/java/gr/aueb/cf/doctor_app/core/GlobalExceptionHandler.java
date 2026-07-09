@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.AuthenticationException;
@@ -106,6 +107,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)      // 403
                 .body(new ErrorResponseDTO("ACCESS_DENIED", "User is not allowed to access this endpoint"));
+    }
+
+    @ExceptionHandler(MailException.class)
+    public ResponseEntity<ErrorResponseDTO> handleMailException(MailException e) {
+        log.error("Failed to send email: {}", e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)   // 503
+                .body(new ErrorResponseDTO("EMAIL_SEND_FAILED",
+                        "Could not send activation email. Please try again."));
     }
 
 
