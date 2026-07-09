@@ -9,9 +9,8 @@ import jakarta.validation.constraints.Pattern;
 public record DoctorActivationDTO(
 
 
-        @NotBlank(message = "{licence.notBlank}")
-        @Pattern(regexp ="^DOC-\\d{4}-\\d{5}$", message = "{licence.pattern.invalid}")
-        String licenceNumber,
+        @NotBlank(message = "{activation.token.notBlank}")
+        String token,
 
          @Valid
          @NotNull
