@@ -69,6 +69,7 @@ public class AppointmentController {
     }
 
 
+    @PatchMapping("/{uuid}/cancel")
     public ResponseEntity<AppointmentReadOnlyDTO> cancelAppointment(
             @PathVariable UUID uuid,
             Authentication authentication) throws EntityNotFoundException, InvalidArgumentException
