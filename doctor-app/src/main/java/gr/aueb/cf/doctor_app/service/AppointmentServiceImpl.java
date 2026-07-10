@@ -110,7 +110,7 @@ public class AppointmentServiceImpl implements IAppointmentService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('CANCEL_APPOINTMENT')")
+    @PreAuthorize("hasAuthority('UPDATE_APPOINTMENT')")
     @Transactional(rollbackFor = {EntityNotFoundException.class, InvalidArgumentException.class})
     public AppointmentReadOnlyDTO cancelAppointment(UUID uuid, String username)
             throws EntityNotFoundException, InvalidArgumentException {
@@ -121,7 +121,7 @@ public class AppointmentServiceImpl implements IAppointmentService {
 
             Appointment appointment = appointmentRepository.findByUuidAndDeletedFalse(uuid)
                     .orElseThrow(()-> new EntityNotFoundException(
-                            "APPOINTMENT", "Appointment with uuid: "+ uuid +"not found"));
+                            "APPOINTMENT", "Appointment with uuid: "+ uuid +" not found"));
 
             if (!appointment.getPatient().getId().equals(patient.getId()))
                 throw new EntityNotFoundException("APPOINTMENT", "Appointment with uuid: "+ uuid +"not found");
