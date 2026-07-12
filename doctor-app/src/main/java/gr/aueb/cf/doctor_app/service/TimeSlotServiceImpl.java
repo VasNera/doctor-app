@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -101,11 +102,16 @@ public class TimeSlotServiceImpl implements ITimeSlotService{
     @PreAuthorize("hasAuthority('VIEW_TIMESLOTS')")
     @Transactional(readOnly = true)
     @Override
-    public Page<TimeSlotReadOnlyDTO> getAvailableTimeSlots(Long doctorId, LocalDate date, Pageable pageable) {
+    public Page<TimeSlotReadOnlyDTO> getAvailableTimeSlots(UUID doctorUuid, LocalDate date, Pageable pageable)
+            throws EntityNotFoundException {
+
+        Doctor doctor = doctorRepository.findByUuidAndDeletedFalse(doctorUuid)
+                .orElseThrow(() -> new EntityNotFoundException("DOCTOR",
+                        "Doctor not found with uuid: " + doctorUuid));
 
         Page<TimeSlot> timeSlots = (date != null) ? timeSlotRepository.findAllByDoctorIdAndDateAndTimeSlotStatus(
-                doctorId, date, TimeSlotStatus.AVAILABLE, pageable)
-                : timeSlotRepository.findAllByDoctorIdAndTimeSlotStatus(doctorId,TimeSlotStatus.AVAILABLE, pageable);
+                doctor.getId(), date, TimeSlotStatus.AVAILABLE, pageable)
+                : timeSlotRepository.findAllByDoctorIdAndTimeSlotStatus(doctor.getId(),TimeSlotStatus.AVAILABLE, pageable);
         return timeSlots.map(mapper::mapToTimeSlotReadOnlyDTO);
         }
     }

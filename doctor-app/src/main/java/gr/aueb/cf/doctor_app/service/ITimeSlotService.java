@@ -9,10 +9,12 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 public interface ITimeSlotService {
 
     List<TimeSlotReadOnlyDTO> generateTimeSlots(TimeSlotGenerateDTO generateDTO, String username)
         throws EntityNotFoundException, InvalidArgumentException;
-    Page<TimeSlotReadOnlyDTO> getAvailableTimeSlots(Long doctorId, LocalDate date, Pageable pageable);
+    Page<TimeSlotReadOnlyDTO> getAvailableTimeSlots(UUID doctorUuid, LocalDate date, Pageable pageable)
+        throws EntityNotFoundException;
 }

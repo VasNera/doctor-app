@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/timeslots")
@@ -88,15 +89,19 @@ public class TimeSlotController {
             @ApiResponse(
                     responseCode = "200", description = "Available timeslots returned",
                     content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Page.class)))
+                    schema = @Schema(implementation = Page.class))),
+            @ApiResponse(
+                    responseCode = "404", description = "Doctor not found",
+                    content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
 
     @GetMapping("/available")
     public ResponseEntity<Page<TimeSlotReadOnlyDTO>> getAvailableTimeSlots(
-            @RequestParam Long doctorId,
+            @RequestParam UUID doctorUuid,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            Pageable pageable) {
-        return ResponseEntity.ok(timeSlotService.getAvailableTimeSlots(doctorId, date, pageable));
+            Pageable pageable) throws EntityNotFoundException {
+        return ResponseEntity.ok(timeSlotService.getAvailableTimeSlots(doctorUuid, date, pageable));
     }
 }
