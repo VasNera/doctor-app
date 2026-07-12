@@ -16,9 +16,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -114,6 +118,30 @@ public class DoctorController {
         DoctorReadOnlyDTO response = doctorService.activateDoctor(doctorActivationDTO);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
+    }
+
+
+    @Operation(
+            summary = "Get all doctors",
+            description = "Returns all active doctors, paginated. Used for doctor selection when booking."
+    )
+
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200" , description = "Doctors returned",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Page.class))),
+            @ApiResponse(
+                    responseCode = "403" , description = "Access denied",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+
+    @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping
+    public ResponseEntity<Page<DoctorReadOnlyDTO>> getDoctors(
+            @PageableDefault(size = 10, sort = "lastname") Pageable pageable) {
+        return ResponseEntity.ok(doctorService.getDoctors(pageable));
     }
 
 }
