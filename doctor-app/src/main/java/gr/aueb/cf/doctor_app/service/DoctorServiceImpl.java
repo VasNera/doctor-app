@@ -12,6 +12,8 @@ import gr.aueb.cf.doctor_app.model.User;
 import gr.aueb.cf.doctor_app.repository.DoctorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,5 +100,13 @@ public class DoctorServiceImpl implements IDoctorService {
             log.error("Doctor activation failed: {}", e.getMessage());
             throw e;
         }
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('VIEW_DOCTORS')")
+    @Transactional(readOnly = true)
+    public Page<DoctorReadOnlyDTO> getDoctors(Pageable pageable) {
+        return doctorRepository.findAllByDeletedFalse(pageable)
+                .map(mapper::mapToDoctorReadOnlyDTO);
     }
 }

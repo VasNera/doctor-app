@@ -6,6 +6,8 @@ import gr.aueb.cf.doctor_app.core.exceptions.InvalidArgumentException;
 import gr.aueb.cf.doctor_app.dto.DoctorActivationDTO;
 import gr.aueb.cf.doctor_app.dto.DoctorInsertDTO;
 import gr.aueb.cf.doctor_app.dto.DoctorReadOnlyDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface IDoctorService {
 
@@ -14,4 +16,6 @@ public interface IDoctorService {
 
     DoctorReadOnlyDTO activateDoctor(DoctorActivationDTO activationDTO)
         throws EntityAlreadyExistsException, InvalidArgumentException, EntityNotFoundException;
+
+    Page<DoctorReadOnlyDTO> getDoctors(Pageable pageable);
 }
