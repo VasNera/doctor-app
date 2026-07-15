@@ -1,0 +1,18 @@
+# IDE
+.idea/
+*.iml
+
+# Tooling
+.claude/
+
+# Frontend lives in its own separate git repository (doctor-app-frontend)
+frontend/
+
+# Logs
+logs/
+doctor-app/logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
