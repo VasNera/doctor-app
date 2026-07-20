@@ -1,6 +1,8 @@
 package gr.aueb.cf.doctor_app.service;
 
 import gr.aueb.cf.doctor_app.core.exceptions.EntityAlreadyExistsException;
+import gr.aueb.cf.doctor_app.core.exceptions.EntityNotFoundException;
+import gr.aueb.cf.doctor_app.core.exceptions.InvalidArgumentException;
 import gr.aueb.cf.doctor_app.dto.DoctorActivationDTO;
 import gr.aueb.cf.doctor_app.dto.DoctorInsertDTO;
 import gr.aueb.cf.doctor_app.dto.DoctorReadOnlyDTO;
@@ -88,7 +90,7 @@ class DoctorServiceImplTest {
     }
 
     @Test
-    void createDoctor_dublicateEmail_throwsEntityAlreadyExists(){
+    void createDoctor_duplicateEmail_throwsEntityAlreadyExists(){
 
         DoctorInsertDTO dto = new DoctorInsertDTO(
                 "Katerina",
@@ -109,7 +111,7 @@ class DoctorServiceImplTest {
     }
 
     @Test
-    void createDoctor_dublicateLicenceNumber_throwsEntityAlreadyExists(){
+    void createDoctor_duplicateLicenceNumber_throwsEntityAlreadyExists(){
 
         DoctorInsertDTO dto = new DoctorInsertDTO(
                 "Katerina",
@@ -162,5 +164,37 @@ class DoctorServiceImplTest {
         assertNotNull(doctor.getUser());
 
     }
+
+    @Test
+    void activateDoctor_invalidToken_throwsNotFound()throws Exception{
+
+        UserInsertDTO userDTO = new UserInsertDTO("dalakito", "Dalaka1!");
+        DoctorActivationDTO activationDTO = new DoctorActivationDTO("bad-token", userDTO);
+
+        when(doctorRepository.findByActivationToken("bad-token")).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class,()->doctorService.activateDoctor(activationDTO));
+
+        verify(userService, never()).createUser(any(),any());
+
+    }
+
+    @Test
+    void activateDoctor_alreadyActivated_throwInvalidArgument()throws Exception{
+        UserInsertDTO userDTO = new UserInsertDTO("dalakito", "Dalaka1!");
+        DoctorActivationDTO activationDTO = new DoctorActivationDTO("valid-token", userDTO);
+
+        Doctor doctor = new Doctor();
+        doctor.setUser(new User());
+
+        when(doctorRepository.findByActivationToken("valid-token")).thenReturn(Optional.of(doctor));
+
+        assertThrows(InvalidArgumentException.class,()->doctorService.activateDoctor(activationDTO));
+        verify(userService, never()).createUser(any(),any());
+
+    }
+
+
+
 
 }
