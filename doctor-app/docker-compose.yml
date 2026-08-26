@@ -1,0 +1,42 @@
+# Runs the whole backend — Spring Boot app + MySQL — with one command:
+#   docker compose up --build
+# Secrets are read from a local .env file (git-ignored) next to this file.
+
+services:
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_DATABASE: doctorappdb
+      MYSQL_USER: doctorappuser
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3307:3306"          # host 3307 → avoids clashing with a local MySQL on 3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:             # the app waits until MySQL is actually ready
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  backend:
+    build: .                 # build the Dockerfile in this folder
+    restart: on-failure      # MySQL's first-run init can lag its healthcheck — retry
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      # Override the datasource URL to point at the mysql container over the
+      # docker network (no TLS between containers → useSSL=false).
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/doctorappdb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      MYSQL_USER: doctorappuser
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      MAILTRAP_USERNAME: ${MAILTRAP_USERNAME}
+      MAILTRAP_PASSWORD: ${MAILTRAP_PASSWORD}
+    ports:
+      - "8080:8080"
+
+volumes:
+  mysql-data:                # named volume → the DB survives container restarts
