@@ -61,10 +61,18 @@ MySQL installation.
 Requires only **Docker Desktop** — no Java or MySQL installation needed.
 
 ```bash
-cd doctor-app
-cp .env.example .env      # then open .env and fill in the values
+git clone https://github.com/VasNera/doctor-app.git
+cd doctor-app/doctor-app
+cp .env.example .env
 docker compose up --build
 ```
+
+> Note the repeated folder name: the outer `doctor-app` is the repository, the inner one is
+> the Gradle project — and that is where `docker-compose.yml` lives.
+
+`.env.example` ships with working development values, so the copy above is enough to start
+the application. Open `.env` only if you want to use your own database password or plug in
+your own Mailtrap credentials.
 
 `docker compose up` performs the whole build and deployment:
 
@@ -116,16 +124,23 @@ MAILTRAP_PASSWORD=
 All four keys must be present, but the Mailtrap ones may be left empty — they are only
 needed to send doctor activation emails, and the seeded demo doctor is already activated.
 
-Generate a signing key with:
+A ready-made development key is in `doctor-app/.env.example` and can be reused here. To
+generate your own:
 
 ```bash
 openssl rand -base64 32
 ```
 
-**3. Run:**
+On Windows without openssl, use PowerShell instead:
+
+```powershell
+[Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Max 256 }))
+```
+
+**3. Run** — from the inner `doctor-app` folder, the one holding `build.gradle`:
 
 ```bash
-cd doctor-app
+cd doctor-app/doctor-app
 ./gradlew bootRun        # Windows: gradlew.bat bootRun
 ```
 
@@ -135,7 +150,7 @@ Flyway applies the migrations on startup and the application is available on
 ### Building a standalone artifact
 
 ```bash
-cd doctor-app
+cd doctor-app/doctor-app
 ./gradlew bootJar
 java -jar build/libs/doctor-app-0.0.1-SNAPSHOT.jar
 ```
@@ -158,9 +173,12 @@ how the application would be deployed to a host such as Railway or Render:
 ### Frontend
 
 The React client lives in its own repository —
-[VasNera/frontend](https://github.com/VasNera/frontend) — and is built separately:
+[VasNera/frontend](https://github.com/VasNera/frontend) — and is built separately.
+It needs **Node.js 20.19+** and expects this backend to be running on port 8080:
 
 ```bash
+git clone https://github.com/VasNera/frontend.git
+cd frontend
 npm install
 npm run build      # type-checks and produces a static bundle in dist/
 npm run dev        # development server on http://localhost:5173
@@ -187,7 +205,7 @@ topped up on every startup so there is always availability in the next two weeks
 ### Tests
 
 ```bash
-cd doctor-app
+cd doctor-app/doctor-app
 ./gradlew test
 ```
 
