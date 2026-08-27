@@ -2,7 +2,7 @@ package gr.aueb.cf.doctor_app.core.exceptions;
 
 public class EntityNotFoundException extends AppGenericException{
 
-    private static final String DEFAULT_CODE = "Not Found";
+    private static final String DEFAULT_CODE = "_NOT_FOUND";
 
     public EntityNotFoundException(String code, String message) {
         super(code + DEFAULT_CODE, message);
