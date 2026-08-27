@@ -4,6 +4,8 @@ REST API for a small clinic, built with Spring Boot: patients register and book 
 
 Frontend (React SPA) lives in its own repository: [VasNera/frontend](https://github.com/VasNera/frontend).
 
+![Booking an appointment](docs/screenshots/book-appointment.png)
+
 ## Features
 
 - **Stateless JWT authentication** with role- and capability-based authorization (`ADMIN`, `DOCTOR`, `PATIENT`)
@@ -16,6 +18,31 @@ Frontend (React SPA) lives in its own repository: [VasNera/frontend](https://git
 - **Localized error messages** (EL/EN) via `Accept-Language`
 - **OpenAPI / Swagger UI** documentation with JWT support
 - Soft delete, audit columns (`created_at`, `updated_at`), UUID external identifiers
+
+## Screenshots
+
+Each role sees only what it is allowed to. All screens are available in Greek and English,
+switchable at runtime.
+
+**Admin — the doctors of the clinic.** Creating one here sends an activation email; the
+admin never sets anyone's password.
+
+![Doctors list](docs/screenshots/doctors-admin.png)
+
+**Doctor — generating availability.** Working hours are turned into 30-minute slots for a
+date range, weekends skipped, with a live preview of how many slots will be created.
+
+![Generating time slots](docs/screenshots/timeslots-doctor.png)
+
+**Patient — own appointments.** Status is colour-coded and upcoming bookings can be
+cancelled, which frees the slot for someone else.
+
+![Patient appointments](docs/screenshots/appointments-patient.png)
+
+**Swagger UI.** Every endpoint is documented and can be tried from the browser; the lock
+icons mark the ones that require a Bearer token.
+
+![Swagger UI](docs/screenshots/swagger.png)
 
 ## Tech stack
 
@@ -168,7 +195,12 @@ how the application would be deployed to a host such as Railway or Render:
 | `MYSQL_PASSWORD` | — | database password (**required**) |
 | `JWT_SECRET_KEY` | — | Base64 JWT signing key (**required**) |
 | `MAILTRAP_USERNAME` / `MAILTRAP_PASSWORD` | — | SMTP credentials for activation emails |
+| `ALLOWED_ORIGINS` | `http://localhost:5173,http://localhost:3000` | CORS whitelist — must include the deployed frontend's origin |
 | `SPRING_DATASOURCE_URL` | — | overrides the whole JDBC URL, if needed |
+
+`ALLOWED_ORIGINS` is easy to overlook when deploying: the API rejects any browser request
+coming from an origin that is not on the list, so a frontend served from a new domain will
+fail every call with a CORS error until its origin is added.
 
 ### Frontend
 
