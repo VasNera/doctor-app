@@ -68,7 +68,7 @@ public class DoctorController {
             BindingResult bindingResult)throws EntityAlreadyExistsException, ValidationException {
         doctorInsertValidator.validate(doctorInsertDTO,bindingResult);
         if (bindingResult.hasErrors()){
-            throw new ValidationException("Doctor", "Validation failed", bindingResult);
+            throw new ValidationException("DOCTOR", "Validation failed", bindingResult);
 
         }
         DoctorReadOnlyDTO response =doctorService.createDoctor(doctorInsertDTO);
@@ -113,7 +113,7 @@ public class DoctorController {
             ValidationException{
         doctorActivationValidator.validate(doctorActivationDTO, bindingResult);
         if (bindingResult.hasErrors()){
-            throw new ValidationException("DoctorActivation", "Activation failed", bindingResult);
+            throw new ValidationException("DOCTOR_ACTIVATION", "Activation failed", bindingResult);
         }
         DoctorReadOnlyDTO response = doctorService.activateDoctor(doctorActivationDTO);
         return new ResponseEntity<>(response, HttpStatus.OK);

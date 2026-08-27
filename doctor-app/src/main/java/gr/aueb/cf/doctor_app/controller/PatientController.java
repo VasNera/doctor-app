@@ -62,7 +62,7 @@ public class PatientController {
         patientInsertValidator.validate(patientInsertDTO, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            throw new ValidationException("Patient", "Validation failed", bindingResult);
+            throw new ValidationException("PATIENT", "Validation failed", bindingResult);
 
         }
 

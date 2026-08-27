@@ -26,11 +26,11 @@ public class UserServiceImpl implements IUserService{
     public User createUser(UserInsertDTO userInsertDTO, String roleName) throws EntityAlreadyExistsException {
         try {
             if (userRepository.existsByUsername(userInsertDTO.username()))
-                throw new EntityAlreadyExistsException("User", "User with username" + userInsertDTO.username()
-                        + "already exists");
+                throw new EntityAlreadyExistsException("USER", " User with username " + userInsertDTO.username()
+                        + " already exists");
 
             Role role = roleRepository.findByName(roleName)
-                    .orElseThrow(() -> new IllegalStateException("Role" + roleName + "not found"));
+                    .orElseThrow(() -> new IllegalStateException("Role " + roleName + " not found"));
 
 
             User user = new User(userInsertDTO.username(), passwordEncoder.encode(userInsertDTO.password()));

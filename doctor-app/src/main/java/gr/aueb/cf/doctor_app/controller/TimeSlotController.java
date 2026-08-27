@@ -71,7 +71,7 @@ public class TimeSlotController {
             ValidationException {
 
         if (bindingResult.hasErrors()) {
-            throw new ValidationException("TimeSlot", "Validation failed", bindingResult);
+            throw new ValidationException("TIMESLOT", "Validation failed", bindingResult);
         }
 
         List<TimeSlotReadOnlyDTO> response = timeSlotService.generateTimeSlots(timeSlotGenerateDTO,

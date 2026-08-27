@@ -74,7 +74,7 @@ public class AppointmentController {
             ValidationException{
 
         if (bindingResult.hasErrors()) {
-            throw new ValidationException("Appointment", "Validation failed", bindingResult);
+            throw new ValidationException("APPOINTMENT", "Validation failed", bindingResult);
         }
         AppointmentReadOnlyDTO response = appointmentService.bookAppointment
                 (appointmentInsertDTO, authentication.getName());
