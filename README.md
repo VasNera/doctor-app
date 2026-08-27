@@ -50,11 +50,52 @@ All endpoints are prefixed with `/api/v1`.
 
 Interactive documentation: **`http://localhost:8080/swagger-ui.html`** (authorize with a Bearer token to try secured endpoints).
 
-## Getting started
+## Build & Deploy
 
-Prerequisites: **Java 21**, **MySQL 8**.
+There are two ways to run the application: **with Docker Compose**, which brings up the
+database and the API together with a single command, or **locally**, against your own
+MySQL installation.
 
-**1. Database** (defaults — all overridable via environment variables):
+### Option A — Docker Compose (recommended)
+
+Requires only **Docker Desktop** — no Java or MySQL installation needed.
+
+```bash
+cd doctor-app
+cp .env.example .env      # then open .env and fill in the values
+docker compose up --build
+```
+
+`docker compose up` performs the whole build and deployment:
+
+1. **Builds the application image** from [`Dockerfile`](doctor-app/Dockerfile) — a
+   multi-stage build that compiles the project with Gradle on `eclipse-temurin:21-jdk`
+   (`./gradlew bootJar`) and copies only the resulting jar into a slim
+   `eclipse-temurin:21-jre` runtime image.
+2. **Starts MySQL 8** with a named volume (`mysql-data`), so the database survives
+   restarts, and waits for its healthcheck before starting the API.
+3. **Runs the Flyway migrations** on first boot, creating the schema and seeding roles
+   and capabilities.
+4. **Seeds demo data** (development profile only) so the application is usable
+   immediately — see [Demo accounts](#demo-accounts) below.
+
+| Service | URL |
+|---|---|
+| REST API | `http://localhost:8080/api/v1` |
+| Swagger UI | `http://localhost:8080/swagger-ui.html` |
+| MySQL | `localhost:3307` (mapped from 3306 inside the container, to avoid clashing with a local MySQL) |
+
+```bash
+docker compose down       # stop, keep the database
+docker compose down -v    # stop and delete the database volume
+```
+
+### Option B — Run locally
+
+Requires **Java 21** and **MySQL 8**. The Gradle wrapper is included, so Gradle itself
+does not need to be installed.
+
+**1. Create the database:**
 
 ```sql
 CREATE DATABASE doctorappdb;
@@ -62,13 +103,23 @@ CREATE USER 'doctorappuser'@'localhost' IDENTIFIED BY '<your password>';
 GRANT ALL PRIVILEGES ON doctorappdb.* TO 'doctorappuser'@'localhost';
 ```
 
-**2. Secrets** — create `doctor-app/src/main/resources/application-secret.properties` (git-ignored):
+**2. Provide the configuration.** Create `doctor-app/src/main/resources/application-secret.properties`
+(git-ignored, imported automatically):
 
 ```properties
-MYSQL_PASSWORD=<your db password>
+MYSQL_PASSWORD=<the password from step 1>
 JWT_SECRET_KEY=<Base64-encoded key, at least 256 bits>
-MAILTRAP_USERNAME=<mailtrap sandbox user>
-MAILTRAP_PASSWORD=<mailtrap sandbox password>
+MAILTRAP_USERNAME=
+MAILTRAP_PASSWORD=
+```
+
+All four keys must be present, but the Mailtrap ones may be left empty — they are only
+needed to send doctor activation emails, and the seeded demo doctor is already activated.
+
+Generate a signing key with:
+
+```bash
+openssl rand -base64 32
 ```
 
 **3. Run:**
@@ -78,11 +129,65 @@ cd doctor-app
 ./gradlew bootRun        # Windows: gradlew.bat bootRun
 ```
 
-On startup Flyway applies the migrations and a bootstrap admin is seeded (`admin` / `Ad12345!` — development only). Activation emails land in the Mailtrap sandbox; the activation link points to the frontend (`http://localhost:5173/activate?token=...`).
+Flyway applies the migrations on startup and the application is available on
+`http://localhost:8080`.
 
-**4. Tests:**
+### Building a standalone artifact
 
 ```bash
+cd doctor-app
+./gradlew bootJar
+java -jar build/libs/doctor-app-0.0.1-SNAPSHOT.jar
+```
+
+Configuration is fully externalised, so the jar needs no secret file — every setting can
+be supplied as an environment variable, which is how the Docker image is configured and
+how the application would be deployed to a host such as Railway or Render:
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `MYSQL_HOST` | `localhost` | database host |
+| `MYSQL_PORT` | `3306` | database port |
+| `MYSQL_DB` | `doctorappdb` | database name |
+| `MYSQL_USER` | `doctorappuser` | database user |
+| `MYSQL_PASSWORD` | — | database password (**required**) |
+| `JWT_SECRET_KEY` | — | Base64 JWT signing key (**required**) |
+| `MAILTRAP_USERNAME` / `MAILTRAP_PASSWORD` | — | SMTP credentials for activation emails |
+| `SPRING_DATASOURCE_URL` | — | overrides the whole JDBC URL, if needed |
+
+### Frontend
+
+The React client lives in its own repository —
+[VasNera/frontend](https://github.com/VasNera/frontend) — and is built separately:
+
+```bash
+npm install
+npm run build      # type-checks and produces a static bundle in dist/
+npm run dev        # development server on http://localhost:5173
+```
+
+`dist/` contains plain static files and can be served by any static host. The API base
+URL is configured in `src/api/axios.ts`.
+
+### Demo accounts
+
+On startup (development profile) the application seeds an administrator, an activated
+doctor with two weeks of available time slots, and a patient — so every role can be
+explored without going through the email activation flow:
+
+| Role | Username | Password |
+|---|---|---|
+| Admin | `admin` | `Ad12345!` |
+| Doctor | `drdemo` | `Doc12345!` |
+| Patient | `patientdemo` | `Pat12345!` |
+
+The seeding is idempotent: accounts are created once, and the doctor's time slots are
+topped up on every startup so there is always availability in the next two weeks.
+
+### Tests
+
+```bash
+cd doctor-app
 ./gradlew test
 ```
 
