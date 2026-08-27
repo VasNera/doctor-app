@@ -2,7 +2,7 @@
 
 REST API for a small clinic, built with Spring Boot: patients register and book appointments on doctors' time slots, doctors manage their schedule, and an admin manages the doctors.
 
-Frontend (React SPA) lives in its own repository: [VasNera/frontend](https://github.com/VasNera/frontend).
+Frontend (React SPA) lives in its own repository: [VasNera/doctor-app-frontend](https://github.com/VasNera/doctor-app-frontend).
 
 ![Booking an appointment](docs/screenshots/book-appointment.png)
 
@@ -205,12 +205,12 @@ fail every call with a CORS error until its origin is added.
 ### Frontend
 
 The React client lives in its own repository —
-[VasNera/frontend](https://github.com/VasNera/frontend) — and is built separately.
+[VasNera/doctor-app-frontend](https://github.com/VasNera/doctor-app-frontend) — and is built separately.
 It needs **Node.js 20.19+** and expects this backend to be running on port 8080:
 
 ```bash
-git clone https://github.com/VasNera/frontend.git
-cd frontend
+git clone https://github.com/VasNera/doctor-app-frontend.git
+cd doctor-app-frontend
 npm install
 npm run build      # type-checks and produces a static bundle in dist/
 npm run dev        # development server on http://localhost:5173
@@ -332,4 +332,4 @@ Run everything with `./gradlew test`.
 
 ## Related
 
-- Frontend: [VasNera/frontend](https://github.com/VasNera/frontend) — React 19 + TypeScript, TanStack Router/Query, react-hook-form + zod, i18n EL/EN.
+- Frontend: [VasNera/doctor-app-frontend](https://github.com/VasNera/doctor-app-frontend) — React 19 + TypeScript, TanStack Router/Query, react-hook-form + zod, i18n EL/EN.
