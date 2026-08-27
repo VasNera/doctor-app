@@ -191,6 +191,11 @@ cd doctor-app
 ./gradlew test
 ```
 
+The service and controller tests are pure unit tests and need nothing but the JDK.
+`DoctorAppApplicationTests`, however, boots the whole Spring context, so it needs a
+reachable database — run it after the setup of Option A or Option B above, or it will
+fail with `Access denied for user 'doctorappuser'`.
+
 ## Architecture
 
 Classic layered architecture — controllers stay thin, business rules live in services, persistence behind Spring Data repositories:
